@@ -7,6 +7,9 @@
 #include <time.h>
 #include <stdexcept>
 #include <unordered_map>
+#include <math.h>
+#include <iomanip>
+#include <sstream>
 
 class Logger {
 private:
@@ -202,6 +205,9 @@ int main() {
     signal(SIGINT, signalHandler);
 
     std::unordered_map<std::string, std::string> store;
+    std::unordered_map<std::string, int> count;
+    std::unordered_map<std::string, int> rateTotal;
+    std::unordered_map<std::string, int> ratePart;
 
     Logger::setToDebug();
     Socket::startListening(7963);
@@ -216,11 +222,31 @@ int main() {
 
             std::string message(clientMessage.message, clientMessage.length);
 
-            if (message.substr(0, 3) == "SET") {
-                size_t firstSpace = message.find(' ', 4);
-                std::string key = message.substr(4, firstSpace - 4);
-                std::string value = message.substr(firstSpace + 1, message.length() - firstSpace - 2);
+            if (message.substr(0, 5) == "STORE") {
+                size_t asPos = message.find(" AS ");
+                std::string key = message.substr(6, asPos - 6);
+                std::string value = message.substr(asPos + 4, message.length() - asPos - 5);
                 store[key] = value;
+
+                Socket::sendMessage("OK");
+            }
+
+            if (message.substr(0, 5) == "COUNT") {
+                std::string key = message.substr(6, message.length() - 7);
+                count[key]++;
+
+                Socket::sendMessage("OK");
+            }
+
+            if (message.substr(0, 4) == "RATE") {
+                if (message.find("PART") != std::string::npos) {
+                    std::string key = message.substr(5, message.length() - 11);
+                    rateTotal[key]++;
+                    ratePart[key]++;
+                } else {
+                    std::string key = message.substr(5, message.length() - 12);
+                    rateTotal[key]++;
+                }
 
                 Socket::sendMessage("OK");
             }
@@ -228,10 +254,22 @@ int main() {
             if (message.substr(0, 3) == "GET") {
                 size_t firstSpace = message.find(' ', 4);
                 std::string key = message.substr(4, message.length() - 5);
-                std::string value = store.find(key) != store.end() ? store[key] : "null";
 
-                Logger::debug("Retrieved key=" + key + " value=" + value);
-                Socket::sendMessage(value);
+                if (store.find(key) != store.end()) {
+                    Socket::sendMessage(store[key]);
+                } else if (count.find(key) != count.end()) {
+                    Socket::sendMessage(std::to_string(count[key]));
+                } else if (rateTotal.find(key) != rateTotal.end()) {
+                    int rate = (ratePart[key] * 100) / rateTotal[key];
+                    float rateFloat = roundf(rate) / 100;
+
+                    std::stringstream stream;
+                    stream << std::fixed << std::setprecision(2) << rateFloat;
+                    std::string s = stream.str();
+                    Socket::sendMessage(s);
+                } else {
+                    Socket::sendMessage("null");
+                }
             }   
         } while (clientMessage.length > 0);
 

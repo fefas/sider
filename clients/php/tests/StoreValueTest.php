@@ -18,10 +18,10 @@ final class StoreValueTest extends TestCase
     {
         $this->client = ClientSetting::withUrl($_ENV['SIDER_URL'])->build();
 
-        $this->client->set('test', 'value');
-        $this->client->set('test2', 'value1');
-        $this->client->set('test3', 'value2');
-        $this->client->set('test4', 'value3');
+        $this->client->set('key1', 'value1');
+        $this->client->set('key2', 'value2');
+        $this->client->set('key3', 'value3');
+        $this->client->set('key4', 'value4');
     }
 
     #[After]
@@ -32,15 +32,25 @@ final class StoreValueTest extends TestCase
 
     public static function keysWithExpectedValues(): iterable
     {
-        yield 'test' => ['test', 'value'];
-        yield 'test2' => ['test2', 'value1'];
-        yield 'test3' => ['test3', 'value2'];
-        yield 'test4' => ['test4', 'value3'];
+        yield 'test' => ['key1', 'value1'];
+        yield 'test2' => ['key2', 'value2'];
+        yield 'test3' => ['key3', 'value3'];
+        yield 'test4' => ['key4', 'value4'];
     }
 
     #[Test, DataProvider('keysWithExpectedValues')]
-    public function canRetrieveAStoragedValueByItsKey(string $key, string $expectedValue): void
+    public function getStoragedValueByItsKey(string $key, string $expected): void
     {
-        self::assertEquals($expectedValue, $this->client->get($key));
+        $actual = $this->client->get($key);
+
+        self::assertEquals($expected, $actual);
+    }
+
+    #[Test]
+    public function getNullIfNoValueWasStoredByProvidedKey(): void
+    {
+        $actual = $this->client->get('nkey');
+
+        self::assertNull($actual);
     }
 }
