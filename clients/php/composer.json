@@ -1,0 +1,24 @@
+{
+    "name": "sider/client",
+    "type": "library",
+
+    "autoload": {
+        "psr-4": {
+            "Sider\\Client\\": "src/private/",
+            "Sider\\": "src/public/"
+         }
+    },
+
+    "autoload-dev": {
+        "psr-4": { "Sider\\": "tests/" }
+    },
+
+    "require": {
+        "php": "^8.4"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    }
+}
+

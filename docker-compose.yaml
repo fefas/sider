@@ -1,0 +1,11 @@
+services:
+  client-php:
+    build: clients/php
+    environment:
+      SIDER_URL: sider://server:7963
+    depends_on:
+      - server
+  
+  server:
+    build: server
+    
