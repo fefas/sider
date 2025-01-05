@@ -12,6 +12,7 @@ find_package(fmt REQUIRED)
 find_package(Threads REQUIRED)
 
 file(GLOB_RECURSE SERVER_SOURCES 
+    "lib/*.h"
     "src/*.cpp"
     "src/Command/Commands/*.cpp"
     "src/Registry/*.cpp"

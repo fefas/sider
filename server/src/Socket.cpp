@@ -7,7 +7,7 @@
 #include <string>
 #include <sys/socket.h>
 
-#include "crc.h"
+#include "../lib/CRC.h"
 #include "Socket.h"
 
 using namespace std;
