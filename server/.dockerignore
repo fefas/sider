@@ -1,6 +1,9 @@
 *
 
+!CMakeLists.txt
 !main.cpp
 !tests.cpp
+
+!build/
 !src/
 !tests/

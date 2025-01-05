@@ -45,8 +45,6 @@ int main() {
             continue;
         }
 
-        cout << "package->contentType(): " << package->contentType() << endl;
-
         uint16_t* scopeLen = (uint16_t*) package->content();
         uint16_t* keyLen = (uint16_t*) (package->content() + sizeof(uint16_t));
         string scope = string((char*) (package->content() + sizeof(uint16_t) + sizeof(uint16_t)), *scopeLen);
