@@ -2,7 +2,7 @@
 
 namespace Sider;
 
-use Sider\Client\ConcreteClient;
+use Sider\Client\SocketClient;
 use Sider\Client\SocketConnection;
 
 final readonly class ClientSetting
@@ -10,6 +10,7 @@ final readonly class ClientSetting
     private function __construct(
         private string $host,
         private int $port,
+        private string $scope,
     ) {
     }
 
@@ -17,11 +18,19 @@ final readonly class ClientSetting
     {
         $parsedUrl = parse_url($url);
 
-        return new self($parsedUrl['host'], $parsedUrl['port']);
+        return new self($parsedUrl['host'], $parsedUrl['port'], '');
+    }
+
+    public function withScope(string $scope): self
+    {
+        return new self($this->host, $this->port, $scope);
     }
 
     public function build(): Client
     {
-        return new ConcreteClient(new SocketConnection($this->host, $this->port));
+        return new SocketClient(
+            new SocketConnection($this->host, $this->port),
+            $this->scope,
+        );
     }
 }

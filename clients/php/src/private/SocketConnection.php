@@ -18,6 +18,11 @@ final readonly class SocketConnection
         private int $port,
     ) {
         $this->socket = socket_create(domain: AF_INET, type: SOCK_STREAM, protocol: SOL_TCP);
+        $this->open();
+    }
+
+    public function open(): void
+    {
         socket_connect($this->socket, $this->host, $this->port);
     }
 
@@ -26,13 +31,21 @@ final readonly class SocketConnection
         socket_close(socket: $this->socket);
     }
 
-    public function send(string $data): void
+    public function send(Command $command): void
     {
-        socket_write(socket: $this->socket, data: $data);
+        $data = $command->toBytes();
+        
+        socket_write(socket: $this->socket, data: $data, length: strlen($data));
+
+        // var_dump("Sent command: " . $command->toReadableHex() . " length: " . strlen($command->toBytes()));
     }
 
     public function receive(): string
     {
-        return socket_read(socket: $this->socket, length: 10);
+        $response = socket_read(socket: $this->socket, length: 1024);
+
+        // var_dump("Received response: " . $response);
+
+        return $response;
     }
 }

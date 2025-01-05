@@ -19,5 +19,3 @@ WORKDIR /var/www/sider-client
 COPY composer.* .
 RUN composer install
 COPY . .
-
-ENTRYPOINT ["vendor/bin/phpunit"]

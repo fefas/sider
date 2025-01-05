@@ -2,19 +2,19 @@ MAKEFLAGS += --silent --always
 
 DOCKER = docker compose
 DOCKER_BUILD = ${DOCKER} build
-DOCKER_RUN = ${DOCKER} run --build --rm --remove-orphans
+DOCKER_RUN = ${DOCKER} run --rm --remove-orphans
 
 build:
 	${DOCKER_BUILD}
 
 up:
-	${DOCKER} up --build
+	${DOCKER} up server
 
-clients/php:
-	${DOCKER_BUILD} client-php
+down:
+	${DOCKER} down --remove-orphans
 
-tests:
-	${DOCKER_RUN} client-php
+clients/php/tests:
+	${DOCKER_RUN} client-php ./vendor/bin/phpunit
 
-sh:
-	${DOCKER_RUN} --entrypoint=sh server
+server/tests:
+	TARGET=tests ${DOCKER_RUN} server ./tests/run --gtest_color=yes

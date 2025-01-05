@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  server-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build
+      run: make build
+
+    - name: Run server tests
+      run: make server/tests
+
+  php-client-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build
+      run: make build
+
+    - name: Run PHP client tests
+      run: make clients/php/tests

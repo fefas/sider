@@ -1,11 +1,14 @@
 services:
   client-php:
+    image: sider/php-client
     build: clients/php
     environment:
       SIDER_URL: sider://server:7963
     depends_on:
       - server
-  
+
   server:
-    build: server
-    
+    image: sider
+    build:
+      context: server
+    command: ./main
