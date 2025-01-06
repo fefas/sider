@@ -21,7 +21,7 @@ file(GLOB_RECURSE SERVER_SOURCES
 )
 
 file(GLOB_RECURSE TEST_SOURCES
-    "tests/*.cpp"
+    "tests/Command/*.cpp"
 )
 
 add_executable(sider main.cpp ${SERVER_SOURCES})

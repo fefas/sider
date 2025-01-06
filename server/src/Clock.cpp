@@ -7,7 +7,7 @@ namespace Sider::Clock
 {
     static Clock* globalClock = nullptr;
 
-    struct CClock : public Clock
+    struct RealClock : public Clock
     {
         uint32_t now() override
         {
@@ -18,7 +18,7 @@ namespace Sider::Clock
     Clock* getClock()
     {
         if (!globalClock) {
-            globalClock = new CClock();
+            globalClock = new RealClock();
         }
 
         return globalClock;
