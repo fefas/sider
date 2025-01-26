@@ -40,6 +40,15 @@ final class KeepTest extends ClientTestCase
         self::assertEquals('value2', $actual);
     }
 
+    #[Test]
+    public function clear(): void
+    {
+        $this->client->keep('keep-key', 'value1');
+
+        $this->client->clear('keep-key');
+
+        self::assertNull($this->client->get('keep-key'));
+    }
 
     #[Test]
     public function getNullIfNoValueWasStoredByProvidedKey(): void

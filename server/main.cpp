@@ -44,6 +44,10 @@ int main() {
         Sider::Command::Command* command = nullptr;
 
         switch (package->contentType()) {
+            case 20: {
+                command = Sider::Command::clear(scope, key);
+                break;
+            }
             case 21: {
                 command = Sider::Command::get(scope, key);
                 break;

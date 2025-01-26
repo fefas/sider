@@ -22,6 +22,11 @@ final readonly class SocketClient implements Client
         return $response === 'nil' ? null : $response;
     }
 
+    public function clear(string $key): void
+    {
+        $this->send(Command::clear($this->scope, $key));
+    }
+
     public function keep(string $key, string $value, ?int $ttl = null): void
     {
         $this->send(Command::keep($this->scope, $key, $value, $ttl));
