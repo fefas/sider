@@ -1,19 +1,11 @@
 #include <gtest/gtest.h>
 
 #include "../../src/Command/Command.h"
-#include "Test.h"
+#include "CommandTest.h"
 
 namespace Sider::Command
 {
-    using namespace Sider;
-    using namespace std;
-
-    class KeepCommandTest : public Test {};
-
-    TEST_F(KeepCommandTest, GetNullIfNoRegisterIsFoundByScopeAndKey)
-    {
-        assertCommandResult(get("nscope", "nkey"), Result::nil());
-    }
+    class KeepCommandTest : public CommandTest {};
 
     class GetKeptValueByScopeAndKey : public KeepCommandTest, public testing::WithParamInterface<CommandResultScenario> {};
     INSTANTIATE_TEST_SUITE_P(KeepCommandTest, GetKeptValueByScopeAndKey, testing::Values(
@@ -32,7 +24,7 @@ namespace Sider::Command
         execute(keep("scope2", "key1", "value3"));
         execute(keep("scope2", "key2", "value4"));
 
-        assertCommandResult(getCommand, expectedResult);
+        assertCommandResult(expectedResult, getCommand);
     }
 
     TEST_F(KeepCommandTest, GetLatestKeptValueByScopeAndKey)
@@ -41,14 +33,21 @@ namespace Sider::Command
         execute(keep("scope", "key", "value2"));
         execute(keep("scope", "key", "value3"));
 
-        assertCommandResult(get("scope", "key"), Result::with("value3"));
+        assertCommandResult(Result::with("value3"), get("scope", "key"));
+    }
+
+    TEST_F(KeepCommandTest, GetKeptValueIfTtlIsNotExpired)
+    {
+        execute(keep("scope", "key", "value", 100));
+
+        assertCommandResult(Result::with("value"), get("scope", "key"));
     }
 
     TEST_F(KeepCommandTest, GetNilIfTtlIsExpired)
     {
         execute(keep("scope", "key", "value", 100));
-        advanceClock(101);
+        advanceTime(101);
 
-        assertCommandResult(get("scope", "key"), Result::nil());
+        assertCommandResult(Result::nil(), get("scope", "key"));
     }
 }

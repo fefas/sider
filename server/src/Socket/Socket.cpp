@@ -2,12 +2,12 @@
 #include <iomanip>
 #include <netinet/in.h>
 #include <sstream>
-#include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <string>
 #include <sys/socket.h>
 
-#include "../lib/CRC.h"
+#include "../../lib/CRC.h"
+#include "../Logger.h"
 #include "Socket.h"
 
 using namespace std;
@@ -102,7 +102,7 @@ class CSocket : public Socket
                 throw runtime_error("Error creating socket");
             }
 
-            spdlog::debug("Socket created");
+            LOG_DEBUG("Socket created");
         }
 
         void bindSocket()
@@ -116,7 +116,7 @@ class CSocket : public Socket
                 throw runtime_error("Error binding socket");
             }
 
-            spdlog::debug("Socket bound");
+            LOG_DEBUG("Socket bound");
         }
 
         void listenForConnections()
@@ -125,7 +125,7 @@ class CSocket : public Socket
                 throw runtime_error("Error listening");
             }
 
-            spdlog::debug("Listening for connections on port {}", port);
+            LOG_DEBUG("Listening for connections on port {}", port);
         }
 
     public:
@@ -145,13 +145,13 @@ class CSocket : public Socket
                 throw runtime_error("Error accepting connection");
             }
 
-            spdlog::debug("Client connected");
+            LOG_DEBUG("Client connected");
         }
 
         void closeConnection()
         {
             ::close(clientSocket);
-            spdlog::debug("Client disconnected");
+            LOG_DEBUG("Client disconnected");
         }
 
         Package* receiveNextPackage() override
@@ -167,7 +167,7 @@ class CSocket : public Socket
                 return nullptr;
             }
 
-            spdlog::debug("Package received: {} ({} bytes)", toReadableHex(len, buffer), len);
+            LOG_DEBUG("Package received: {} ({} bytes)", toReadableHex(len, buffer), len);
 
             return new RequestPackage(len, buffer);
         }
@@ -178,7 +178,7 @@ class CSocket : public Socket
                 throw runtime_error("Error sending message");
             }
 
-            spdlog::debug("Sent message to client: {}", package);
+            LOG_DEBUG("Sent message to client: {}", package);
         }
 
         void stopListening() override
@@ -186,7 +186,7 @@ class CSocket : public Socket
             ::close(serverSocket);
             ::close(clientSocket);
 
-            spdlog::debug("Socket closed");
+            LOG_DEBUG("Socket closed");
         }
 
 };

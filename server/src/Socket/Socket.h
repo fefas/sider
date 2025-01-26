@@ -1,5 +1,4 @@
-#ifndef SIDER_SOCKET_H
-#define SIDER_SOCKET_H
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -28,5 +27,3 @@ namespace Socket
 
     Socket* listenTo(const int port);
 }
-
-#endif

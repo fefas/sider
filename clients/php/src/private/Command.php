@@ -47,7 +47,7 @@ final readonly class Command
         );
     }
 
-    public static function keep(string $scope, string $key, string $value, ?int $ttl = null): self
+    public static function keep(string $scope, string $key, string $value, ?int $ttl): self
     {
         return new self(    
             type: self::KEEP,
@@ -58,14 +58,14 @@ final readonly class Command
         );
     }
 
-    public static function count(string $scope, string $key, ?int $ttl): self
+    public static function count(string $scope, string $key, int $step, ?int $ttl): self
     {
         return new self(    
             type: self::COUNT,
             scope: $scope,
             key: $key,
-            argsFormat: 'V',
-            argsValues: [$ttl],
+            argsFormat: 'CV',
+            argsValues: [$step, $ttl],
         );
     }
 

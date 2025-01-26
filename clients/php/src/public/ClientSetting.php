@@ -18,7 +18,11 @@ final readonly class ClientSetting
     {
         $parsedUrl = parse_url($url);
 
-        return new self($parsedUrl['host'], $parsedUrl['port'], '');
+        return new self(
+            host: $parsedUrl['host'],
+            port: $parsedUrl['port'],
+            scope: '',
+        );
     }
 
     public function withScope(string $scope): self

@@ -13,18 +13,21 @@ find_package(Threads REQUIRED)
 
 file(GLOB_RECURSE SERVER_SOURCES 
     "lib/*.h"
-    "src/*.cpp"
-    "src/Command/Commands/*.cpp"
-    "src/Registry/*.cpp"
-    "src/Registry/Register/*.cpp"
-    "src/Registry/Register/Registers/*.cpp"
+    "src/Command/*.cpp"
+    "src/Socket/*.cpp"
+    "src/Storage/*.cpp"
+    "src/Storage/Entries/*.cpp"
+)
+
+file(GLOB_RECURSE PRODUCTION_SOURCES 
+    "src/Time.cpp"
 )
 
 file(GLOB_RECURSE TEST_SOURCES
     "tests/Command/*.cpp"
 )
 
-add_executable(sider main.cpp ${SERVER_SOURCES})
+add_executable(sider main.cpp ${SERVER_SOURCES} ${PRODUCTION_SOURCES})
 add_executable(sider-tests tests.cpp ${SERVER_SOURCES} ${TEST_SOURCES})
 
 target_link_libraries(sider PRIVATE

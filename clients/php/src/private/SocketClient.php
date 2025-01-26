@@ -27,9 +27,9 @@ final readonly class SocketClient implements Client
         $this->send(Command::keep($this->scope, $key, $value, $ttl));
     }
 
-    public function count(string $key, ?int $ttl = null): void
+    public function count(string $key, int $step = 1, ?int $ttl = null): void
     {
-        $this->send(Command::count($this->scope, $key, $ttl));
+        $this->send(Command::count($this->scope, $key, $step, $ttl));
     }
 
     public function rate(string $key, Rate $rate, ?int $ttl = null): void

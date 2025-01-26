@@ -2,31 +2,28 @@
 
 namespace Sider;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
 final class CountTest extends ClientTestCase
 {
-    #[Test]
-    public function getCountByKey(): void
+    public static function keysWithExpectedCount(): iterable
     {
-        $this->client->count('key2', 2);
-        $this->client->count('key2', 2);
-        $this->client->count('key2', 2);
-        $this->client->count('key2', 2);
-
-        $actual = $this->client->get('key2');
-
-        self::assertEquals('4', $actual);
+        yield ['key1', 1];
+        yield ['key2', 8];
     }
 
-    // #[Test]
-    // public function ttl(): void
-    // {
-    //     $this->client->count('key3', 5 * 60);
-    //     $this->client->count('key3', 5 * 60);
+    #[Test, DataProvider('keysWithExpectedCount')]
+    public function getCountByKey(string $key, int $expected): void
+    {
+        $this->client->count('key1', 1);
+        $this->client->count('key2', 2);
+        $this->client->count('key2', 2);
+        $this->client->count('key2', 2);
+        $this->client->count('key2', 2);
 
-    //     $actual = $this->client->get('key3');
+        $actual = $this->client->get($key);
 
-    //     self::assertEquals('2', $actual);
-    // }
+        self::assertEquals($expected, $actual);
+    }
 }
