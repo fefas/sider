@@ -50,4 +50,12 @@ namespace Sider::Command
 
         assertCommandResult(Result::nil(), get("scope", "key"));
     }
+
+    TEST_F(KeepCommandTest, ClearKeptValue)
+    {
+        execute(keep("scope", "key", "value"));
+        execute(clear("scope", "key"));
+
+        assertCommandResult(Result::nil(), get("scope", "key"));
+    }
 }

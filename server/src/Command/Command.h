@@ -25,6 +25,7 @@ namespace Sider::Command
     };
 
     Command* get(std::string scope, std::string key);
+    Command* clear(std::string scope, std::string key);
 
     Command* keep(std::string scope, std::string key, std::string value);
     Command* keep(std::string scope, std::string key, std::string value, uint32_t ttl);
@@ -36,10 +37,5 @@ namespace Sider::Command
     Command* dequeue(std::string scope, std::string key);
 
     // TODO command ideas
-    // Command* delete(string scope, string key);
-    // Command* start();
-    // Command* commit();
-    // Command* rollback();
-
     // Command* rate(string scope, string key, uint8_t partition, uint16_t step, uint32_t ttl = 0);
 }

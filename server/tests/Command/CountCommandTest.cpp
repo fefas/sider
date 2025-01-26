@@ -58,4 +58,12 @@ namespace Sider::Command
 
         assertCommandResult(expectedResult, get("ttl", "key"));
     }
+
+    TEST_F(CountCommandTest, ClearCountedValue)
+    {
+        execute(count("scope", "key", 10));
+        execute(clear("scope", "key"));
+
+        assertCommandResult(Result::nil(), get("scope", "key"));
+    }
 }
