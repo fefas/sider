@@ -32,6 +32,16 @@ final readonly class SocketClient implements Client
         $this->send(Command::count($this->scope, $key, $step, $ttl));
     }
 
+    public function queue(string $key, string $value): void
+    {
+        $this->send(Command::queue($this->scope, $key, $value));
+    }
+
+    public function dequeue(string $key): void
+    {
+        $this->send(Command::dequeue($this->scope, $key));
+    }
+
     public function rate(string $key, Rate $rate, ?int $ttl = null): void
     {
     }

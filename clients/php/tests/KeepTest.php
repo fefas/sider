@@ -5,7 +5,7 @@ namespace Sider;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
-final class KeepValueTest extends ClientTestCase
+final class KeepTest extends ClientTestCase
 {
 
     public static function keysWithExpectedValues(): iterable

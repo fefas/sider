@@ -60,6 +60,16 @@ int main() {
                 command = Sider::Command::count(scope, key, *ttl);
                 break;
             }
+            case 30: {
+                uint16_t* valueLen = (uint16_t*) (package->content() + end);
+                string value = string((char*) (package->content() + end + sizeof(uint16_t)), *valueLen);
+                command = Sider::Command::queue(scope, key, value);
+                break;
+            }
+            case 31: {
+                command = Sider::Command::dequeue(scope, key);
+                break;
+            }
             default:
                 break;
         }
