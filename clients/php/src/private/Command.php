@@ -20,10 +20,10 @@ final readonly class Command
     // key: N bytes
     private const CONTENT_BASE_FORMAT = 'vva*a*';
 
+    private const CLEAR = 20;
     private const GET = 21;
     private const KEEP = 22;
     private const COUNT = 23;
-
     private const QUEUE = 30;
     private const DEQUEUE = 31;
 
@@ -43,6 +43,17 @@ final readonly class Command
     {
         return new self(    
             type: self::GET,
+            scope: $scope,
+            key: $key,
+            argsFormat: '',
+            argsValues: [],
+        );
+    }
+
+    public static function clear(string $scope, string $key): self
+    {
+        return new self(
+            type: self::CLEAR,
             scope: $scope,
             key: $key,
             argsFormat: '',

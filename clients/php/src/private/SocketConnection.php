@@ -36,15 +36,11 @@ final readonly class SocketConnection
         $data = $command->toBytes();
         
         socket_write(socket: $this->socket, data: $data, length: strlen($data));
-
-        // var_dump("Sent command: " . $command->toReadableHex() . " length: " . strlen($command->toBytes()));
     }
 
     public function receive(): string
     {
         $response = socket_read(socket: $this->socket, length: 1024);
-
-        // var_dump("Received response: " . $response);
 
         return $response;
     }

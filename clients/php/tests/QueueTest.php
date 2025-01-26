@@ -75,4 +75,16 @@ final class QueueTest extends ClientTestCase
 
         self::assertEquals($expected, $actual);
     }
+
+    #[Test]
+    public function clear(): void
+    {
+        $this->client->queue('queue1', 'v1');
+        $this->client->queue('queue1', 'v2');
+        $this->client->queue('queue1', 'v3');
+
+        $this->client->clear('queue1');
+
+        self::assertNull($this->client->get('queue1'));
+    }
 }

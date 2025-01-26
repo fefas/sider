@@ -29,6 +29,16 @@ namespace Sider::Storage
         std::unordered_map<std::string, Entry::Entry*> entries;
 
         public:
+        void clear(const Entry::Id id) override
+        {
+            if (!entries.contains(id.toString())) {
+                return;
+            }
+
+            delete entries[id.toString()];
+            entries.erase(id.toString());
+        }
+
         Entry::Entry* find(const Entry::Id id) override
         {
             if (!entries.contains(id.toString())) {

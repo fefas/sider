@@ -4,14 +4,14 @@
 
 namespace Sider::Command
 {
-    class CommonCommandTest : public CommandTest {};
+    class BasicFeaturesTest : public CommandTest {};
 
-    TEST_F(CommonCommandTest, GetNilIfNoEntryIsFoundByScopeAndKey)
+    TEST_F(BasicFeaturesTest, GetNilIfNoEntryIsFoundByScopeAndKey)
     {
         assertCommandResult(Result::nil(), get("nscope", "nkey"));
     }
 
-    TEST_F(CommonCommandTest, GetErrorIfCommandDoesNotMatchPreviousOne)
+    TEST_F(BasicFeaturesTest, GetErrorIfCommandDoesNotMatchPreviousOne)
     {
         execute(keep("scope", "key", "value"));
 

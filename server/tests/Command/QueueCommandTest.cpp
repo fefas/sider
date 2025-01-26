@@ -65,4 +65,16 @@ namespace Sider::Command
 
         assertCommandResult(expectedResult, getCommand);
     }
+
+    TEST_F(QueueCommandTest, ClearQueuedValues)
+    {
+        execute(queue("scope", "key", "value"));
+        execute(queue("scope", "key", "value"));
+        execute(queue("scope", "key", "value"));
+        execute(queue("scope", "key", "value"));
+
+        execute(clear("scope", "key"));
+
+        assertCommandResult(Result::nil(), get("scope", "key"));
+    }
 }

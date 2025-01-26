@@ -26,4 +26,16 @@ final class CountTest extends ClientTestCase
 
         self::assertEquals($expected, $actual);
     }
+
+    #[Test]
+    public function clear(): void
+    {
+        $this->client->count('count-key');
+        $this->client->count('count-key');
+        $this->client->count('count-key');
+
+        $this->client->clear('count-key');
+
+        self::assertNull($this->client->get('count-key'));
+    }
 }
