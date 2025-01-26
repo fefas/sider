@@ -8,14 +8,14 @@ namespace Sider::Command
 {
     using namespace Sider::Storage;
 
-    class CQueueCommand : public Command
+    class QueueCommand : public Command
     {
         private:
         const Entry::Id id;
         const std::string value;
 
         public:
-        CQueueCommand(Entry::Id id, std::string value) :
+        QueueCommand(Entry::Id id, std::string value) :
             id(id),
             value(value)
         {}
@@ -36,6 +36,6 @@ namespace Sider::Command
 
     Command* queue(std::string scope, std::string key, std::string value)
     {
-        return new CQueueCommand(Entry::Id{scope, key}, value);
+        return new QueueCommand(Entry::Id{scope, key}, value);
     }
 }
