@@ -9,7 +9,8 @@ namespace Sider::Storage::Entry
     enum Type
     {
         COUNTER,
-        KEEPER 
+        KEEPER,
+        QUEUE
     };
 
     struct Id // TODO move to storage?
@@ -56,6 +57,14 @@ namespace Sider::Storage::Entry
         virtual const uint16_t get() = 0;
     };
 
+    struct QueueEntry : public Entry
+    {
+        virtual void queue(std::string value) = 0;
+        virtual void dequeue() = 0;
+        virtual const std::string get() = 0;
+    };
+
     KeeperEntry* initKeeperEntry();
     CounterEntry* initCounterEntry();
+    QueueEntry* initQueueEntry();
 }

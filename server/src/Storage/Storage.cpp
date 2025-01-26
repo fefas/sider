@@ -45,14 +45,19 @@ namespace Sider::Storage
             return nullptr;
         }
 
+        Entry::CounterEntry* getCounter(const Entry::Id id) override
+        {
+            return static_cast<Entry::CounterEntry*>(get(id, Entry::Type::COUNTER));
+        }
+
         Entry::KeeperEntry* getKeeper(const Entry::Id id) override
         {
             return static_cast<Entry::KeeperEntry*>(get(id, Entry::Type::KEEPER));
         }
 
-        Entry::CounterEntry* getCounter(const Entry::Id id) override
+        Entry::QueueEntry* getQueue(const Entry::Id id) override
         {
-            return static_cast<Entry::CounterEntry*>(get(id, Entry::Type::COUNTER));
+            return static_cast<Entry::QueueEntry*>(get(id, Entry::Type::QUEUE));
         }
 
         private:
@@ -71,7 +76,9 @@ namespace Sider::Storage
         {
             switch (type) {
                 case Entry::Type::COUNTER: return Entry::initCounterEntry();
-                default: return Entry::initKeeperEntry();
+                case Entry::Type::KEEPER: return Entry::initKeeperEntry();
+                case Entry::Type::QUEUE: return Entry::initQueueEntry();
+                default: throw std::runtime_error("Unsupported entry type '" + id.toString() + "'");
             }
         }
     };
