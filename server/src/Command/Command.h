@@ -1,37 +1,44 @@
-#ifndef SIDER_COMMAND_H
-#define SIDER_COMMAND_H
+#pragma once
 
 #include <cstdint>
 #include <string>
 
-#include "../Registry/Registry.h"
+#include "../Storage/Storage.h"
 
 namespace Sider::Command
 {
-    using namespace Sider;
-    using namespace std;
-
     struct Result
     {
         const bool success;
-        const string value;
+        const std::string value;
 
         static Result ok() { return Result{true, "ok"}; }
         static Result nil() { return Result{false, "nil"}; }
-        static Result with(uint32_t value) { return Result{true, to_string(value)}; }
-        static Result with(string value) { return Result{true, value}; }
-        static Result error(string message) { return Result{false, message}; }
+        static Result with(uint32_t value) { return Result{true, std::to_string(value)}; }
+        static Result with(std::string value) { return Result{true, value}; }
+        static Result error(std::string message) { return Result{false, message}; }
     };
 
     struct Command
     {
-        virtual Result execute(Registry::Registry* registry) = 0;
+        virtual Result execute(Sider::Storage::Storage* storage) = 0;
     };
 
-    Command* get(string scope, string key);
-    Command* keep(string scope, string key, string value, uint32_t ttl = 0);
-    Command* count(string scope, string key, uint32_t ttl = 0);
-    // Command* rate(string scope, string key);
-}
+    Command* get(std::string scope, std::string key);
 
-#endif
+    Command* keep(std::string scope, std::string key, std::string value);
+    Command* keep(std::string scope, std::string key, std::string value, uint32_t ttl);
+
+    Command* count(std::string scope, std::string key, uint8_t step);
+    Command* count(std::string scope, std::string key, uint8_t step, uint32_t ttl);
+
+    // TODO command ideas
+    // Command* delete(string scope, string key);
+    // Command* start();
+    // Command* commit();
+    // Command* rollback();
+
+    // Command* rate(string scope, string key, uint8_t partition, uint16_t step, uint32_t ttl = 0);
+    // Command* queue(string scope, string key, string value, uint16_t partition);
+    // Command* dequeue(string scope, string key, uint16_t partition);
+}

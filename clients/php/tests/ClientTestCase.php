@@ -5,6 +5,7 @@ namespace Sider;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 
 abstract class ClientTestCase extends TestCase
 {
@@ -13,7 +14,9 @@ abstract class ClientTestCase extends TestCase
     #[Before]
     public function setUpClient(): void
     {
-        $this->client = ClientSetting::withUrl($_ENV['SIDER_URL'])->build();
+        $this->client = ClientSetting::withUrl($_ENV['SIDER_URL'])
+            ->withScope(Uuid::uuid4()->toString())
+            ->build();
     }
 
     #[After]

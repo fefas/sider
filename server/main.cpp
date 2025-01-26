@@ -1,38 +1,28 @@
 #include <cstdint>
-// #include <sys/socket.h>
-// #include <unistd.h>
 #include <string.h>
-// #include <signal.h>
-// #include <time.h>
-// #include <stdexcept>
-// #include <unordered_map>
-// #include <math.h>
-// #include <iomanip>
-// #include <sstream>
-#include <iostream>
-#include <spdlog/spdlog.h>
 
 #include "src/Command/Command.h"
-#include "src/Registry/Registry.h"
-#include "src/Socket.h"
+#include "src/Logger.h"
+#include "src/Socket/Socket.h"
+#include "src/Storage/Storage.h"
 
 using namespace std;
 
+// #include <signal.h>
 // bool stop = false;
-
 // void signalHandler(int signum) {
 //     Logger::debug("Shutting down server");
 //     stop = true;
-
 //     exit(0);
 // }
 
 int main() {
-    spdlog::set_level(spdlog::level::debug);
-    spdlog::debug("Server starting");
+    SET_DEBUG_LOG_LEVEL;
 
+    LOG_DEBUG("Server starting");
     Socket::Socket* socket = Socket::listenTo(7963);
-    Sider::Registry::Registry* registry = Sider::Registry::createEmpty();
+    Sider::Storage::Storage* storage = Sider::Storage::empty();
+    LOG_INFO("Server ready");
 
     socket->acceptConnection();
 
@@ -74,7 +64,7 @@ int main() {
                 break;
         }
 
-        Sider::Command::Result result = command->execute(registry);
+        Sider::Command::Result result = command->execute(storage);
 
         socket->sendNextPackage(result.value);
     }

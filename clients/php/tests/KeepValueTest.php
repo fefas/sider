@@ -10,14 +10,14 @@ final class KeepValueTest extends ClientTestCase
 
     public static function keysWithExpectedValues(): iterable
     {
-        yield 'test1' => ['keep-key1', 'value1'];
-        yield 'test2' => ['keep-key2', 'value2'];
-        yield 'test3' => ['keep-key3', 'value3'];
-        yield 'test4' => ['keep-key4', 'value4'];
+        yield ['keep-key1', 'value1'];
+        yield ['keep-key2', 'value2'];
+        yield ['keep-key3', 'value3'];
+        yield ['keep-key4', 'value4'];
     }
 
     #[Test, DataProvider('keysWithExpectedValues')]
-    public function getStoragedValueByItsKey(string $key, string $expected): void
+    public function getKeptValueByItsKey(string $key, string $expected): void
     {
         $this->client->keep('keep-key1', 'value1');
         $this->client->keep('keep-key2', 'value2');
@@ -30,7 +30,7 @@ final class KeepValueTest extends ClientTestCase
     }
 
     #[Test]
-    public function getLatestStoragedValueByItsKey(): void
+    public function getLatestKeptValueByItsKey(): void
     {
         $this->client->keep('keep-key', 'value1');
         $this->client->keep('keep-key', 'value2');

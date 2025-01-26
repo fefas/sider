@@ -8,23 +8,41 @@ DOCKER_LOGS = ${DOCKER} logs -f
 build:
 	${DOCKER_BUILD}
 
-up:
-	${DOCKER} up --watch server
-
-down:
-	${DOCKER} down --remove-orphans
-
-logs:
-	${DOCKER_LOGS}
-
-%/logs:
-	${DOCKER_LOGS} ${*}
-
+clients/php/tests: path ?= tests/
 clients/php/tests:
-	${DOCKER_RUN} client-php ./vendor/bin/phpunit
+	${DOCKER_RUN} client-php ./vendor/bin/phpunit ${path}
+
+clients/php/tests/%:
+	make clients/php/tests path=tests/${*}
 
 server/tests:
-	${DOCKER_RUN} server ctest --test-dir build/
+	${DOCKER_RUN} server ./build/sider-tests
+	# ${DOCKER_RUN} server ctest --test-dir build/
 
-server/bash:
+#
+# Dev
+dev/setup:
+	make dev/down
+	mkdir -p ./server/build
+	rm -r ./server/build/* 2>/dev/null || true
+	make build dev/up
+
+dev/up:
+	${DOCKER} up --watch server
+
+dev/down:
+	${DOCKER} down --remove-orphans
+
+dev/logs:
+	${DOCKER_LOGS}
+
+dev/tests:
+	make build
+	make server/tests
+	make clients/php/tests
+
+dev/server/bash:
 	${DOCKER_RUN} server bash
+
+dev/client/php/bash:
+	${DOCKER_RUN} client-php sh
