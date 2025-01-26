@@ -24,6 +24,9 @@ final readonly class Command
     private const KEEP = 22;
     private const COUNT = 23;
 
+    private const QUEUE = 30;
+    private const DEQUEUE = 31;
+
     private int $contentType;
     private string $contentFormat;
     private array $contentValues;
@@ -55,6 +58,28 @@ final readonly class Command
             key: $key,
             argsFormat: 'Vva*',
             argsValues: [$ttl ?? 0, strlen($value), $value],
+        );
+    }
+
+    public static function queue(string $scope, string $key, string $value): self
+    {
+        return new self(
+            type: self::QUEUE,
+            scope: $scope,
+            key: $key,
+            argsFormat: 'va*',
+            argsValues: [strlen($value), $value],
+        );
+    }
+
+    public static function dequeue(string $scope, string $key): self
+    {
+        return new self(
+            type: self::DEQUEUE,
+            scope: $scope,
+            key: $key,
+            argsFormat: '',
+            argsValues: [],
         );
     }
 

@@ -32,6 +32,9 @@ namespace Sider::Command
     Command* count(std::string scope, std::string key, uint8_t step);
     Command* count(std::string scope, std::string key, uint8_t step, uint32_t ttl);
 
+    Command* queue(std::string scope, std::string key, std::string value);
+    Command* dequeue(std::string scope, std::string key);
+
     // TODO command ideas
     // Command* delete(string scope, string key);
     // Command* start();
@@ -39,6 +42,4 @@ namespace Sider::Command
     // Command* rollback();
 
     // Command* rate(string scope, string key, uint8_t partition, uint16_t step, uint32_t ttl = 0);
-    // Command* queue(string scope, string key, string value, uint16_t partition);
-    // Command* dequeue(string scope, string key, uint16_t partition);
 }
