@@ -10,7 +10,8 @@ namespace Sider::Storage::Entry
     {
         COUNTER,
         KEEPER,
-        QUEUE
+        QUEUE,
+        RATER
     };
 
     struct Id // TODO move to storage?
@@ -45,16 +46,16 @@ namespace Sider::Storage::Entry
         virtual ~Entry() = default;
     };
     
-    struct KeeperEntry : public Entry
-    {
-        virtual void keep(Ttl ttl, std::string value) = 0;
-        virtual const std::string get() = 0;
-    };
-    
     struct CounterEntry : public Entry
     {
         virtual void increment(Ttl ttl, uint8_t step) = 0;
         virtual const uint16_t get() = 0;
+    };
+    
+    struct KeeperEntry : public Entry
+    {
+        virtual void keep(Ttl ttl, std::string value) = 0;
+        virtual const std::string get() = 0;
     };
 
     struct QueueEntry : public Entry
@@ -64,7 +65,14 @@ namespace Sider::Storage::Entry
         virtual const std::string get() = 0;
     };
 
+    struct RaterEntry : public Entry
+    {
+        virtual void increment(Ttl ttl, uint8_t partition, uint16_t step) = 0;
+        virtual const uint16_t get(uint8_t partition) = 0;
+    };
+
     KeeperEntry* initKeeperEntry();
     CounterEntry* initCounterEntry();
     QueueEntry* initQueueEntry();
+    RaterEntry* initRaterEntry();
 }

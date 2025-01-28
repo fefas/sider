@@ -12,10 +12,12 @@ namespace Sider::Command
     {
         private:
         const Entry::Id id;
+        const uint8_t partition;
 
         public:
-        GetCommand(Entry::Id id) :
-            id(id)
+        GetCommand(Entry::Id id, uint8_t partition) :
+            id(id),
+            partition(partition)
         {}
 
         Result execute(Sider::Storage::Storage* storage) override
@@ -42,6 +44,11 @@ namespace Sider::Command
 
                     return Result::with(queueEntry->get());
                 }
+                case Entry::Type::RATER: {
+                    Entry::RaterEntry* raterEntry = dynamic_cast<Entry::RaterEntry*>(entry);
+
+                    return Result::with(raterEntry->get(partition));
+                }
                 default: {
                     throw std::runtime_error("Unsupported entry type '" + id.toString() + "'");
                 }
@@ -51,6 +58,11 @@ namespace Sider::Command
 
     Command* get(std::string scope, std::string key)
     {
-        return new GetCommand(Entry::Id{scope, key});
+        return new GetCommand(Entry::Id{scope, key}, 0);
     }
+
+    Command* get(std::string scope, std::string key, uint8_t partition)
+    {
+        return new GetCommand(Entry::Id{scope, key}, partition);
+    }   
 }

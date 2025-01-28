@@ -70,6 +70,11 @@ namespace Sider::Storage
             return static_cast<Entry::QueueEntry*>(get(id, Entry::Type::QUEUE));
         }
 
+        Entry::RaterEntry* getRater(const Entry::Id id) override
+        {
+            return static_cast<Entry::RaterEntry*>(get(id, Entry::Type::RATER));
+        }
+
         private:
         Entry::Entry* get(const Entry::Id id, Entry::Type type)
         {
@@ -88,6 +93,7 @@ namespace Sider::Storage
                 case Entry::Type::COUNTER: return Entry::initCounterEntry();
                 case Entry::Type::KEEPER: return Entry::initKeeperEntry();
                 case Entry::Type::QUEUE: return Entry::initQueueEntry();
+                case Entry::Type::RATER: return Entry::initRaterEntry();
                 default: throw std::runtime_error("Unsupported entry type '" + id.toString() + "'");
             }
         }
