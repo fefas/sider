@@ -1,12 +1,10 @@
 MAKEFLAGS += --silent --always
 
 DOCKER = docker compose
-DOCKER_BUILD = ${DOCKER} build
 DOCKER_RUN = ${DOCKER} run --rm --remove-orphans
-DOCKER_LOGS = ${DOCKER} logs -f
 
 build:
-	${DOCKER_BUILD}
+	${DOCKER} build
 
 clients/php/tests: path ?= tests/
 clients/php/tests:
@@ -34,7 +32,7 @@ dev/down:
 	${DOCKER} down --remove-orphans
 
 dev/logs:
-	${DOCKER_LOGS}
+	${DOCKER} logs -f
 
 dev/tests:
 	make build
