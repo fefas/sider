@@ -49,7 +49,8 @@ int main() {
                 break;
             }
             case 21: {
-                command = Sider::Command::get(scope, key);
+                uint8_t* partition = (uint8_t*) (package->content() + end);
+                command = Sider::Command::get(scope, key, *partition);
                 break;
             }
             case 22: {
@@ -62,6 +63,12 @@ int main() {
             case 23: {
                 uint32_t* ttl = (uint32_t*) (package->content() + end);
                 command = Sider::Command::count(scope, key, *ttl);
+            }
+            case 24: {
+                uint8_t* partition = (uint8_t*) (package->content() + end);
+                uint8_t* step = (uint8_t*) (package->content() + end + sizeof(uint8_t));
+                uint32_t* ttl = (uint32_t*) (package->content() + end + sizeof(uint8_t) + sizeof(uint8_t));
+                command = Sider::Command::rate(scope, key, *partition, *step, *ttl);
                 break;
             }
             case 30: {
