@@ -24,6 +24,7 @@ final readonly class Command
     private const GET = 21;
     private const KEEP = 22;
     private const COUNT = 23;
+    private const RATE = 24;
     private const QUEUE = 30;
     private const DEQUEUE = 31;
 
@@ -39,14 +40,14 @@ final readonly class Command
         $this->contentValues = [strlen($scope), strlen($key), $scope, $key, ...$argsValues];
     }
 
-    public static function get(string $scope, string $key): self
+    public static function get(string $scope, string $key, int $partition = 0): self
     {
         return new self(    
             type: self::GET,
             scope: $scope,
             key: $key,
-            argsFormat: '',
-            argsValues: [],
+            argsFormat: 'C',
+            argsValues: [$partition],
         );
     }
 
@@ -102,6 +103,17 @@ final readonly class Command
             key: $key,
             argsFormat: 'CV',
             argsValues: [$step, $ttl],
+        );
+    }
+
+    public static function rate(string $scope, string $key, int $partition, int $step = 1, ?int $ttl): self
+    {
+        return new self(
+            type: self::RATE,
+            scope: $scope,
+            key: $key,
+            argsFormat: 'CCV',
+            argsValues: [$partition, $step, $ttl],
         );
     }
 

@@ -13,9 +13,9 @@ final readonly class SocketClient implements Client
     ) {
     }
 
-    public function get(string $key): ?string
+    public function get(string $key, int $partition = 0): ?string
     {
-        $this->connection->send(Command::get($this->scope, $key));
+        $this->connection->send(Command::get($this->scope, $key, $partition));
 
         $response = $this->connection->receive();
 
@@ -47,8 +47,9 @@ final readonly class SocketClient implements Client
         $this->send(Command::dequeue($this->scope, $key));
     }
 
-    public function rate(string $key, Rate $rate, ?int $ttl = null): void
+    public function rate(string $key, int $partition, int $step = 1, ?int $ttl = null): void
     {
+        $this->send(Command::rate($this->scope, $key, $partition, $step, $ttl));
     }
 
     private function send(Command $command): string
