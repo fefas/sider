@@ -20,6 +20,7 @@ namespace Sider::Storage::Entry
         const std::string key;
 
         std::string toString() const { return scope + ":" + key; }
+        bool hasScope(const std::string& otherScope) const { return scope == otherScope; }
     };
 
     struct Ttl
