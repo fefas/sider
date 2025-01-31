@@ -42,10 +42,11 @@ namespace Sider::Storage
 
         void truncate(const std::string scope) override
         {
+            std::string prefix = scope + ":";
             std::vector<std::string> to_erase;
 
             for (const auto& [id, entry] : entries) {
-                if (id.find(scope) == 0) {
+                if (id.find(prefix) == 0) {
                     to_erase.push_back(id);
                 }
             }
