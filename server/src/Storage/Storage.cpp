@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <vector>
 
 #include "Entry.h"
 #include "Storage.h"
@@ -37,6 +38,23 @@ namespace Sider::Storage
 
             delete entries[id.toString()];
             entries.erase(id.toString());
+        }
+
+        void truncate(const std::string scope) override
+        {
+            std::string prefix = scope + ":";
+            std::vector<std::string> to_erase;
+
+            for (const auto& [id, entry] : entries) {
+                if (id.find(prefix) == 0) {
+                    to_erase.push_back(id);
+                }
+            }
+
+            for (const auto& id : to_erase) {
+                entries.erase(id);
+                // delete entries[id]; TODO fix me
+            }
         }
 
         Entry::Entry* find(const Entry::Id id) override
