@@ -10,7 +10,7 @@ namespace Sider::Storage
     {
         public:
         EntryTypeMismatchException(const Entry::Id id, Entry::Type type) :
-            std::runtime_error("Entry '" + id.toString() + "' is of type '" + typeToString(type) + "'")
+            std::runtime_error("Entry '" + id.scope.name + ":" + id.key.name + "' is of type '" + typeToString(type) + "'")
         {}
 
         private:
@@ -19,6 +19,7 @@ namespace Sider::Storage
             switch (type) {
                 case Entry::Type::KEEPER: return "KEEPER";
                 case Entry::Type::COUNTER: return "COUNTER";
+                // TODO test more cases
                 default: return "UNKNOWN";
             }
         }
@@ -27,49 +28,41 @@ namespace Sider::Storage
     class MemoryStorage : public Storage
     {
         private:
-        std::unordered_map<std::string, Entry::Entry*> entries;
+        std::unordered_map<std::string, std::unordered_map<std::string, Entry::Entry*>> entries;
 
         public:
         void clear(const Entry::Id id) override
         {
-            if (!entries.contains(id.toString())) {
+            if (!entries.contains(id.scope.name) || !entries[id.scope.name].contains(id.key.name)) {
                 return;
             }
 
-            delete entries[id.toString()];
-            entries.erase(id.toString());
+            delete entries[id.scope.name][id.key.name];
+            entries[id.scope.name].erase(id.key.name);
         }
 
-        void truncate(const std::string scope) override
+        void clear(const Entry::Scope scope) override
         {
-            std::string prefix = scope + ":";
-            std::vector<std::string> to_erase;
-
-            for (const auto& [id, entry] : entries) {
-                if (id.find(prefix) == 0) {
-                    to_erase.push_back(id);
-                }
+            for (const auto & [_, entry] : entries[scope.name]) {
+                delete entry;
             }
 
-            for (const auto& id : to_erase) {
-                entries.erase(id);
-                // delete entries[id]; TODO fix me
-            }
+            entries[scope.name].clear();
         }
 
         Entry::Entry* find(const Entry::Id id) override
         {
-            if (!entries.contains(id.toString())) {
+            if (!entries[id.scope.name].contains(id.key.name)) {
                 return nullptr;
             }
 
-            Entry::Entry* entry = entries[id.toString()];
+            Entry::Entry* entry = entries[id.scope.name][id.key.name];
 
             if (!entry->isExpired()) {
                 return entry;
             }
 
-            entries.erase(id.toString());
+            entries[id.scope.name].erase(id.key.name);
             return nullptr;
         }
 
@@ -96,7 +89,7 @@ namespace Sider::Storage
         private:
         Entry::Entry* get(const Entry::Id id, Entry::Type type)
         {
-            Entry::Entry* entry = find(id) ?: entries[id.toString()] = create(id, type);
+            Entry::Entry* entry = find(id) ?: entries[id.scope.name][id.key.name] = create(id, type);
 
             if (entry->type() != type) {
                 throw EntryTypeMismatchException(id, entry->type());
@@ -112,7 +105,7 @@ namespace Sider::Storage
                 case Entry::Type::KEEPER: return Entry::initKeeperEntry();
                 case Entry::Type::QUEUE: return Entry::initQueueEntry();
                 case Entry::Type::RATER: return Entry::initRaterEntry();
-                default: throw std::runtime_error("Unsupported entry type '" + id.toString() + "'");
+                default: throw std::runtime_error("Unsupported entry type '" + id.scope.name + ":" + id.key.name + "'");
             }
         }
     };

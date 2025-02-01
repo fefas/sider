@@ -50,7 +50,7 @@ namespace Sider::Command
                     return Result::with(raterEntry->get(partition));
                 }
                 default: {
-                    throw std::runtime_error("Unsupported entry type '" + id.toString() + "'");
+                    throw std::runtime_error("Unsupported entry type '" + id.scope.name + ":" + id.key.name + "'");
                 }
             }
         }
