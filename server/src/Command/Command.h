@@ -28,8 +28,7 @@ namespace Sider::Command
     Command* get(std::string scope, std::string key, uint8_t partition);
 
     Command* clear(std::string scope, std::string key);
-
-    Command* truncate(std::string scope);
+    Command* clear(std::string scope);
 
     Command* keep(std::string scope, std::string key, std::string value);
     Command* keep(std::string scope, std::string key, std::string value, uint32_t ttl);

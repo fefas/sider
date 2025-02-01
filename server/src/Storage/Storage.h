@@ -10,7 +10,8 @@ namespace Sider::Storage
     {
         public:
         virtual void clear(const Entry::Id id) = 0;
-        virtual void truncate(const std::string scope) = 0;
+        virtual void clear(const Entry::Scope scope) = 0;
+
         virtual Entry::Entry* find(const Entry::Id id) = 0;
         virtual Entry::CounterEntry* getCounter(const Entry::Id id) = 0;
         virtual Entry::KeeperEntry* getKeeper(const Entry::Id id) = 0;

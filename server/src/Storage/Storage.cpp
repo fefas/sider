@@ -10,7 +10,7 @@ namespace Sider::Storage
     {
         public:
         EntryTypeMismatchException(const Entry::Id id, Entry::Type type) :
-            std::runtime_error("Entry '" + id.toString() + "' is of type '" + typeToString(type) + "'")
+            std::runtime_error("Entry '" + id.scope.name + ":" + id.key.name + "' is of type '" + typeToString(type) + "'")
         {}
 
         private:
@@ -33,36 +33,36 @@ namespace Sider::Storage
         public:
         void clear(const Entry::Id id) override
         {
-            if (!entries[id.scope].contains(id.key)) {
+            if (!entries.contains(id.scope.name) || !entries[id.scope.name].contains(id.key.name)) {
                 return;
             }
 
-            delete entries[id.scope][id.key];
-            entries[id.scope].erase(id.key);
+            delete entries[id.scope.name][id.key.name];
+            entries[id.scope.name].erase(id.key.name);
         }
 
-        void truncate(const std::string scope) override
+        void clear(const Entry::Scope scope) override
         {
-            for (const auto & [_, entry] : entries[scope]) {
+            for (const auto & [_, entry] : entries[scope.name]) {
                 delete entry;
             }
 
-            entries[scope].clear();
+            entries[scope.name].clear();
         }
 
         Entry::Entry* find(const Entry::Id id) override
         {
-            if (!entries[id.scope].contains(id.key)) {
+            if (!entries[id.scope.name].contains(id.key.name)) {
                 return nullptr;
             }
 
-            Entry::Entry* entry = entries[id.scope][id.key];
+            Entry::Entry* entry = entries[id.scope.name][id.key.name];
 
             if (!entry->isExpired()) {
                 return entry;
             }
 
-            entries[id.scope].erase(id.key);
+            entries[id.scope.name].erase(id.key.name);
             return nullptr;
         }
 
@@ -89,7 +89,7 @@ namespace Sider::Storage
         private:
         Entry::Entry* get(const Entry::Id id, Entry::Type type)
         {
-            Entry::Entry* entry = find(id) ?: entries[id.scope][id.key] = create(id, type);
+            Entry::Entry* entry = find(id) ?: entries[id.scope.name][id.key.name] = create(id, type);
 
             if (entry->type() != type) {
                 throw EntryTypeMismatchException(id, entry->type());
@@ -105,7 +105,7 @@ namespace Sider::Storage
                 case Entry::Type::KEEPER: return Entry::initKeeperEntry();
                 case Entry::Type::QUEUE: return Entry::initQueueEntry();
                 case Entry::Type::RATER: return Entry::initRaterEntry();
-                default: throw std::runtime_error("Unsupported entry type '" + id.toString() + "'");
+                default: throw std::runtime_error("Unsupported entry type '" + id.scope.name + ":" + id.key.name + "'");
             }
         }
     };

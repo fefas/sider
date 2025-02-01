@@ -6,21 +6,11 @@
 
 namespace Sider::Storage::Entry
 {
-    enum Type
-    {
-        COUNTER,
-        KEEPER,
-        QUEUE,
-        RATER
-    };
+    enum Type { COUNTER, KEEPER, QUEUE, RATER };
 
-    struct Id // TODO move to storage?
-    {
-        const std::string scope;
-        const std::string key;
-
-        std::string toString() const { return scope + ":" + key; }
-    };
+    struct Scope { const std::string name; };
+    struct Key { const std::string name; };
+    struct Id { const Scope scope; const Key key; };
 
     struct Ttl
     {

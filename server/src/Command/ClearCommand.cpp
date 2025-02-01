@@ -8,13 +8,13 @@ namespace Sider::Command
 {
     using namespace Sider::Storage;
 
-    class ClearCommand : public Command
+    class ClearEntryCommand : public Command
     {
         private:
         const Entry::Id id;
 
         public:
-        ClearCommand(Entry::Id id) :
+        ClearEntryCommand(Entry::Id id) :
             id(id)
         {}
 
@@ -26,8 +26,31 @@ namespace Sider::Command
         }
     };
 
+    class ClearScopeCommand : public Command
+    {
+        private:
+        const Entry::Scope scope;
+
+        public:
+        ClearScopeCommand(Entry::Scope scope) :
+            scope(scope)
+        {}
+
+        Result execute(Sider::Storage::Storage* storage) override
+        {
+            storage->clear(scope);
+
+            return Result::ok();
+        }
+    };
+
     Command* clear(std::string scope, std::string key)
     {
-        return new ClearCommand(Entry::Id{scope, key});
+        return new ClearEntryCommand(Entry::Id{scope, key});
+    }
+
+    Command* clear(std::string scope)
+    {
+        return new ClearScopeCommand(Entry::Scope{scope});
     }
 } 
