@@ -27,49 +27,41 @@ namespace Sider::Storage
     class MemoryStorage : public Storage
     {
         private:
-        std::unordered_map<std::string, Entry::Entry*> entries;
+        std::unordered_map<std::string, std::unordered_map<std::string, Entry::Entry*>> entries;
 
         public:
         void clear(const Entry::Id id) override
         {
-            if (!entries.contains(id.toString())) {
+            if (!entries[id.scope].contains(id.key)) {
                 return;
             }
 
-            delete entries[id.toString()];
-            entries.erase(id.toString());
+            delete entries[id.scope][id.key];
+            entries[id.scope].erase(id.key);
         }
 
         void truncate(const std::string scope) override
         {
-            std::string prefix = scope + ":";
-            std::vector<std::string> to_erase;
-
-            for (const auto& [id, entry] : entries) {
-                if (id.find(prefix) == 0) {
-                    to_erase.push_back(id);
-                }
+            for (const auto & [_, entry] : entries[scope]) {
+                delete entry;
             }
 
-            for (const auto& id : to_erase) {
-                entries.erase(id);
-                // delete entries[id]; TODO fix me
-            }
+            entries[scope].clear();
         }
 
         Entry::Entry* find(const Entry::Id id) override
         {
-            if (!entries.contains(id.toString())) {
+            if (!entries[id.scope].contains(id.key)) {
                 return nullptr;
             }
 
-            Entry::Entry* entry = entries[id.toString()];
+            Entry::Entry* entry = entries[id.scope][id.key];
 
             if (!entry->isExpired()) {
                 return entry;
             }
 
-            entries.erase(id.toString());
+            entries[id.scope].erase(id.key);
             return nullptr;
         }
 
@@ -96,7 +88,7 @@ namespace Sider::Storage
         private:
         Entry::Entry* get(const Entry::Id id, Entry::Type type)
         {
-            Entry::Entry* entry = find(id) ?: entries[id.toString()] = create(id, type);
+            Entry::Entry* entry = find(id) ?: entries[id.scope][id.key] = create(id, type);
 
             if (entry->type() != type) {
                 throw EntryTypeMismatchException(id, entry->type());
