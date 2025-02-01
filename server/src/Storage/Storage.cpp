@@ -19,6 +19,7 @@ namespace Sider::Storage
             switch (type) {
                 case Entry::Type::KEEPER: return "KEEPER";
                 case Entry::Type::COUNTER: return "COUNTER";
+                // TODO test more cases
                 default: return "UNKNOWN";
             }
         }
