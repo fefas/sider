@@ -35,11 +35,15 @@ For running the project on local, you need to have Docker >= 2.32 installed.
 
 1. To start the server, run the following commands in one terminal:
 
-   ```bash make build dev/up ```
+   ```base
+   $ make build dev/up
+   ```
 
 2. To run the tests, run the following commands in another terminal:
 
-   ```bash make server/tests clients/php/tests ```
+   ```bash
+   $ make server/tests clients/php/tests
+   ```
 
 ### Supported commands
 
