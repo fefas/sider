@@ -1,7 +1,9 @@
 #include <iostream>
 #include <cstdint>
-#include <stdexcept>
-#include "../Entry.h"
+
+#include "../Command/Command.h"
+#include "../Storage/Entry.h"
+#include "../Storage/Storage.h"
 
 namespace Sider::Storage::Entry
 {
@@ -68,14 +70,14 @@ namespace Sider::Storage::Entry
         }
     };
 
-    class CCounterEntry : public CounterEntry
+    class CounterEntry : public Entry, public NonPartitionedEntry
     {
         private:
         ExpiringCounts queue;
         uint32_t count;
 
         public:
-        CCounterEntry() :
+        CounterEntry() :
             queue(ExpiringCounts()),
             count(0)
         {}
@@ -87,24 +89,73 @@ namespace Sider::Storage::Entry
 
         bool isExpired() override
         {
-            return 0 == get();
+            return 0 == getInt();
         }
 
-        void increment(Ttl ttl, uint8_t step) override
+        void increment(Ttl ttl, uint8_t step)
         {
             count += step;
 
             if (!ttl.isForever()) queue.add(ttl, step);
         }
 
-        const uint16_t get() override
+        const std::string get() override
+        {
+            return std::to_string(getInt());
+        }
+
+        private:
+        uint16_t getInt()
         {
             return count -= queue.clearExpired();
         }
     };
+}
 
-    CounterEntry* initCounterEntry()
+namespace Sider::Command
+{
+    using namespace Sider::Storage;
+
+    class CountCommand : public Command
     {
-        return new CCounterEntry();
+        private:
+        const Entry::Id id;
+        const Entry::Ttl ttl;
+        const uint8_t step;
+
+        public:
+        CountCommand(Entry::Id id, Entry::Ttl ttl, uint8_t step) :
+            id(id),
+            ttl(ttl),
+            step(step)
+        {}
+
+        Result execute(Sider::Storage::Storage* storage) override
+        {
+            // todo add test when returned type is not CounterEntry
+
+            Entry::Entry* entry = storage->find(id);
+
+            if (entry == nullptr) {
+                Entry::CounterEntry* counter = new Entry::CounterEntry();
+                counter->increment(ttl, step);
+                storage->add(id, counter);
+            } else {
+                Entry::CounterEntry* counter = static_cast<Entry::CounterEntry*>(entry);
+                counter->increment(ttl, step);
+            }
+
+            return Result::ok();
+        }
+    };
+
+    Command* count(std::string scope, std::string key, uint8_t step)
+    {
+        return new CountCommand(Entry::Id{scope, key}, Entry::Ttl::forever(), step);
+    }
+
+    Command* count(std::string scope, std::string key, uint8_t step, uint32_t ttl)
+    {
+        return new CountCommand(Entry::Id{scope, key}, Entry::Ttl::expiringIn(ttl), step);
     }
 }

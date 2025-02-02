@@ -3,7 +3,6 @@
 namespace Sider\Client;
 
 use Sider\Client;
-use Sider\Rate;
 
 final readonly class SocketClient implements Client
 {
@@ -13,7 +12,7 @@ final readonly class SocketClient implements Client
     ) {
     }
 
-    public function get(string $key, int $partition = 0): ?string
+    public function get(string $key, ?int $partition = null): ?string
     {
         $this->connection->send(Command::get($this->scope, $key, $partition));
 

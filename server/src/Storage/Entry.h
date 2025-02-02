@@ -33,36 +33,15 @@ namespace Sider::Storage::Entry
     {
         virtual Type type() const = 0;
         virtual bool isExpired() = 0;
-        virtual ~Entry() = default;
     };
-    
-    struct CounterEntry : public Entry
+
+    struct NonPartitionedEntry
     {
-        virtual void increment(Ttl ttl, uint8_t step) = 0;
-        virtual const uint16_t get() = 0;
-    };
-    
-    struct KeeperEntry : public Entry
-    {
-        virtual void keep(Ttl ttl, std::string value) = 0;
         virtual const std::string get() = 0;
     };
 
-    struct QueueEntry : public Entry
+    struct PartitionedEntry
     {
-        virtual void queue(std::string value) = 0;
-        virtual void dequeue() = 0;
-        virtual const std::string get() = 0;
+        virtual const std::string get(uint8_t partition) = 0;
     };
-
-    struct RaterEntry : public Entry
-    {
-        virtual void increment(Ttl ttl, uint8_t partition, uint16_t step) = 0;
-        virtual const uint16_t get(uint8_t partition) = 0;
-    };
-
-    KeeperEntry* initKeeperEntry();
-    CounterEntry* initCounterEntry();
-    QueueEntry* initQueueEntry();
-    RaterEntry* initRaterEntry();
 }

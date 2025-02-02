@@ -17,6 +17,7 @@ file(GLOB_RECURSE SERVER_SOURCES
     "src/Socket/*.cpp"
     "src/Storage/*.cpp"
     "src/Storage/Entries/*.cpp"
+    "src/Type/*.cpp"
 )
 
 file(GLOB_RECURSE PRODUCTION_SOURCES 

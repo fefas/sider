@@ -43,14 +43,22 @@ int main() {
 
         Sider::Command::Command* command = nullptr;
 
+
         switch (package->contentType()) {
             case 20: {
                 command = Sider::Command::clear(scope, key);
                 break;
             }
             case 21: {
-                uint8_t* partition = (uint8_t*) (package->content() + end);
-                command = Sider::Command::get(scope, key, *partition);
+                LOG_INFO("id: {}:{}", scope, key);
+                LOG_INFO("contentLen: {}", package->contentLen());
+                LOG_INFO("end: {}", end);
+                if (package->contentLen() > end) {
+                    uint8_t* partition = (uint8_t*) (package->content() + end);
+                    command = Sider::Command::get(scope, key, *partition);
+                } else {
+                    command = Sider::Command::get(scope, key);
+                }
                 break;
             }
             case 22: {
