@@ -15,7 +15,6 @@ namespace Sider::Storage
         virtual void add(const Entry::Id id, Entry::Entry *entry) = 0;
 
         virtual Entry::Entry* find(const Entry::Id id) = 0;
-        virtual Entry::CounterEntry* getCounter(const Entry::Id id) = 0;
         virtual Entry::RaterEntry* getRater(const Entry::Id id) = 0;
     };
 

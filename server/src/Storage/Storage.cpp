@@ -72,11 +72,6 @@ namespace Sider::Storage
             return nullptr;
         }
 
-        Entry::CounterEntry* getCounter(const Entry::Id id) override
-        {
-            return static_cast<Entry::CounterEntry*>(get(id, Entry::Type::COUNTER));
-        }
-
         Entry::RaterEntry* getRater(const Entry::Id id) override
         {
             return static_cast<Entry::RaterEntry*>(get(id, Entry::Type::RATER));
@@ -97,7 +92,6 @@ namespace Sider::Storage
         Entry::Entry* create(const Entry::Id id, Entry::Type type)
         {
             switch (type) {
-                case Entry::Type::COUNTER: return Entry::initCounterEntry();
                 case Entry::Type::RATER: return Entry::initRaterEntry();
                 default: throw std::runtime_error("Unsupported entry type '" + id.scope.name + ":" + id.key.name + "'");
             }

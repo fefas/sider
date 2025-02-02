@@ -36,11 +36,6 @@ namespace Sider::Storage::Entry
         virtual bool isExpired() = 0;
         virtual ~Entry() = default;
     };
-    
-    struct CounterEntry : public Entry
-    {
-        virtual void increment(Ttl ttl, uint8_t step) = 0;
-    };
 
     struct RaterEntry : public Entry
     {
@@ -48,6 +43,5 @@ namespace Sider::Storage::Entry
         virtual const uint16_t get(uint8_t partition) = 0;
     };
 
-    CounterEntry* initCounterEntry();
     RaterEntry* initRaterEntry();
 }
