@@ -11,10 +11,3 @@ services:
     image: sider
     build: server
     command: ./build/sider
-    develop:
-      watch:
-        - path: ./server
-          target: /var/www/sider-server
-          action: sync+exec
-          exec:
-            command: cmake --build build/ && ./build/sider
