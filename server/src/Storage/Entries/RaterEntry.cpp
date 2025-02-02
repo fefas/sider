@@ -109,6 +109,11 @@ namespace Sider::Storage::Entry
             if (!ttl.isForever()) expiringCounts.add(ttl, partition, step);
         }
 
+        const std::string get() override
+        {
+            return std::to_string(get(0));
+        }
+
         const uint16_t get(uint8_t partition) override
         {
             clearExpired();

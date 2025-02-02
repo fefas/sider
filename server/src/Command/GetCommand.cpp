@@ -28,16 +28,15 @@ namespace Sider::Command
                 return Result::nil();
             }
 
+            if (entry->type() == Entry::Type::KEEPER) {
+                return Result::with(entry->get());
+            }
+
             switch (entry->type()) {
                 case Entry::Type::COUNTER: {
                     Entry::CounterEntry* counterEntry = dynamic_cast<Entry::CounterEntry*>(entry);
 
                     return Result::with(counterEntry->get());
-                }
-                case Entry::Type::KEEPER: {
-                    Entry::KeeperEntry* keeperEntry = dynamic_cast<Entry::KeeperEntry*>(entry);
-
-                    return Result::with(keeperEntry->get());
                 }
                 case Entry::Type::QUEUE: {
                     Entry::QueueEntry* queueEntry = dynamic_cast<Entry::QueueEntry*>(entry);

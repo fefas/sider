@@ -87,7 +87,7 @@ namespace Sider::Storage::Entry
 
         bool isExpired() override
         {
-            return 0 == get();
+            return 0 == getInt();
         }
 
         void increment(Ttl ttl, uint8_t step) override
@@ -97,7 +97,13 @@ namespace Sider::Storage::Entry
             if (!ttl.isForever()) queue.add(ttl, step);
         }
 
-        const uint16_t get() override
+        const std::string get() override
+        {
+            return std::to_string(getInt());
+        }
+
+        private:
+        uint16_t getInt()
         {
             return count -= queue.clearExpired();
         }
