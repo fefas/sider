@@ -6,7 +6,7 @@
 
 namespace Sider::Storage::Entry
 {
-    struct KeeperEntry : public Entry
+    struct KeeperEntry : public Entry, public NonPartitionedEntry
     {
         private:
         Ttl ttl;
@@ -31,11 +31,6 @@ namespace Sider::Storage::Entry
         const std::string get() override
         {
             return value;
-        }
-
-        const std::string get(uint8_t partition) override
-        {
-            return get();
         }
 
         void keep(Ttl newTtl, std::string newValue)

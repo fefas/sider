@@ -73,7 +73,7 @@ namespace Sider::Storage::Entry
         }
     };
 
-    class RaterEntry : public Entry
+    class RaterEntry : public Entry, public PartitionedEntry
     {
         private:
         uint16_t totalCount;
@@ -105,11 +105,6 @@ namespace Sider::Storage::Entry
             counts[partition] += step;
 
             if (!ttl.isForever()) expiringCounts.add(ttl, partition, step);
-        }
-
-        const std::string get() override
-        {
-            return get(0);
         }
 
         const std::string get(uint8_t partition) override

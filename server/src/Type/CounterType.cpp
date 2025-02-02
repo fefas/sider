@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstdint>
-#include <stdexcept>
 
 #include "../Command/Command.h"
 #include "../Storage/Entry.h"
@@ -71,7 +70,7 @@ namespace Sider::Storage::Entry
         }
     };
 
-    class CounterEntry : public Entry
+    class CounterEntry : public Entry, public NonPartitionedEntry
     {
         private:
         ExpiringCounts queue;
@@ -103,11 +102,6 @@ namespace Sider::Storage::Entry
         const std::string get() override
         {
             return std::to_string(getInt());
-        }
-
-        const std::string get(uint8_t partition) override
-        {
-            return get();
         }
 
         private:

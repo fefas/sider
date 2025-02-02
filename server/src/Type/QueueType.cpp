@@ -7,7 +7,7 @@
 
 namespace Sider::Storage::Entry
 {
-    class QueueEntry : public Entry
+    class QueueEntry : public Entry, public NonPartitionedEntry
     {
         private:
         std::queue<std::string> m_queue;
@@ -40,11 +40,6 @@ namespace Sider::Storage::Entry
         const std::string get() override
         {
             return m_queue.front();
-        }
-
-        const std::string get(uint8_t partition) override
-        {
-            return get();
         }
     };
 }

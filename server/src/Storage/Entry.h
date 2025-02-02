@@ -32,9 +32,16 @@ namespace Sider::Storage::Entry
     struct Entry
     {
         virtual Type type() const = 0;
-        virtual const std::string get() = 0;
-        virtual const std::string get(uint8_t partition) = 0;
         virtual bool isExpired() = 0;
-        virtual ~Entry() = default;
+    };
+
+    struct NonPartitionedEntry
+    {
+        virtual const std::string get() = 0;
+    };
+
+    struct PartitionedEntry
+    {
+        virtual const std::string get(uint8_t partition) = 0;
     };
 }

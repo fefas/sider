@@ -40,15 +40,23 @@ final readonly class Command
         $this->contentValues = [strlen($scope), strlen($key), $scope, $key, ...$argsValues];
     }
 
-    public static function get(string $scope, string $key, int $partition = 0): self
+    public static function get(string $scope, string $key, ?int $partition = null): self
     {
-        return new self(    
-            type: self::GET,
-            scope: $scope,
-            key: $key,
-            argsFormat: 'C',
-            argsValues: [$partition],
-        );
+        return null === $partition
+            ? new self (
+                type: self::GET,
+                scope: $scope,
+                key: $key,
+                argsFormat: '',
+                argsValues: [],
+            )
+            : new self(
+                type: self::GET,
+                scope: $scope,
+                key: $key,
+                argsFormat: 'C',
+                argsValues: [$partition],
+            );
     }
 
     public static function clear(string $scope, string $key): self
