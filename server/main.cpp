@@ -17,7 +17,7 @@ using namespace std;
 // }
 
 int main() {
-    SET_DEBUG_LOG_LEVEL;
+    SET_INFO_LOG_LEVEL;
 
     LOG_DEBUG("Server starting");
     Socket::Socket* socket = Socket::listenTo(7963);
@@ -50,9 +50,6 @@ int main() {
                 break;
             }
             case 21: {
-                LOG_INFO("id: {}:{}", scope, key);
-                LOG_INFO("contentLen: {}", package->contentLen());
-                LOG_INFO("end: {}", end);
                 if (package->contentLen() > end) {
                     uint8_t* partition = (uint8_t*) (package->content() + end);
                     command = Sider::Command::get(scope, key, *partition);

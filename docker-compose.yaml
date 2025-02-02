@@ -14,5 +14,7 @@ services:
     develop:
       watch:
         - path: ./server
-          action: rebuild
           target: /var/www/sider-server
+          action: sync+exec
+          exec:
+            command: cmake --build build/ && ./build/sider
