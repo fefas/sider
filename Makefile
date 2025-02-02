@@ -1,31 +1,28 @@
 MAKEFLAGS += --silent --always
 
-DOCKER = docker compose
+DOCKER = docker compose -f docker-compose.yaml $(if ${CI},,-f docker-compose.dev.yaml)
 DOCKER_RUN = ${DOCKER} run --rm --remove-orphans
+DOCKER_EXEC = ${DOCKER} exec
 
 build:
 	${DOCKER} build
 
-clients/php/tests: path ?= tests/
 clients/php/tests:
-	${DOCKER_RUN} client-php ./vendor/bin/phpunit ${path}
+	${DOCKER_RUN} client-php
 
 clients/php/tests/%:
-	make clients/php/tests path=tests/${*}
+	${DOCKER_RUN} client-php tests/${*}
 
 server/tests:
-	${DOCKER_RUN} server ./build/sider-tests
-	# ${DOCKER_RUN} server ctest --test-dir build/
+	$(if ${CI},${DOCKER_RUN},${DOCKER_EXEC}) server ctest --test-dir build/
 
 #
 # Dev
-dev/setup:
-	make dev/down
-	mkdir -p ./server/build
-	rm -r ./server/build/* 2>/dev/null || true
-	make build dev/up
+dev/status:
+	${DOCKER} ps
 
 dev/up:
+	${DOCKER} build
 	${DOCKER} up --watch server
 
 dev/down:
@@ -34,13 +31,8 @@ dev/down:
 dev/logs:
 	${DOCKER} logs -f
 
-dev/tests:
-	make build
-	make server/tests
-	make clients/php/tests
-
 dev/server/bash:
-	${DOCKER_RUN} server bash
+	${DOCKER_EXEC} server bash
 
 dev/client/php/bash:
-	${DOCKER_RUN} client-php sh
+	${DOCKER_EXEC} client-php sh

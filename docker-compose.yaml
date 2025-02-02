@@ -11,8 +11,3 @@ services:
     image: sider
     build: server
     command: ./build/sider
-    develop:
-      watch:
-        - path: ./server
-          action: rebuild
-          target: /var/www/sider-server

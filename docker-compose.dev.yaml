@@ -1,0 +1,17 @@
+services:
+  client-php:
+    image: sider/php-client
+    build: clients/php
+    environment:
+      SIDER_URL: sider://server:7963
+    depends_on:
+      - server
+
+  server:
+    develop:
+      watch:
+        - path: ./server
+          target: /var/www/sider-server
+          action: sync+exec
+          exec:
+            command: cmake --build build/ && ./build/sider
