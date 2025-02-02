@@ -41,6 +41,11 @@ namespace Sider::Storage::Entry
         {
             return m_queue.front();
         }
+
+        const std::string get(uint8_t partition) override
+        {
+            return get();
+        }
     };
 }
 

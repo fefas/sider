@@ -105,6 +105,11 @@ namespace Sider::Storage::Entry
             return std::to_string(getInt());
         }
 
+        const std::string get(uint8_t partition) override
+        {
+            return get();
+        }
+
         private:
         uint16_t getInt()
         {

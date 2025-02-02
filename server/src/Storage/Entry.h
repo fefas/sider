@@ -33,15 +33,8 @@ namespace Sider::Storage::Entry
     {
         virtual Type type() const = 0;
         virtual const std::string get() = 0;
+        virtual const std::string get(uint8_t partition) = 0;
         virtual bool isExpired() = 0;
         virtual ~Entry() = default;
     };
-
-    struct RaterEntry : public Entry
-    {
-        virtual void increment(Ttl ttl, uint8_t partition, uint16_t step) = 0;
-        virtual const uint16_t get(uint8_t partition) = 0;
-    };
-
-    RaterEntry* initRaterEntry();
 }

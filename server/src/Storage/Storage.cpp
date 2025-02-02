@@ -6,25 +6,6 @@
 
 namespace Sider::Storage
 {
-    class EntryTypeMismatchException : public std::runtime_error
-    {
-        public:
-        EntryTypeMismatchException(const Entry::Id id, Entry::Type type) :
-            std::runtime_error("Entry '" + id.scope.name + ":" + id.key.name + "' is of type '" + typeToString(type) + "'")
-        {}
-
-        private:
-        static std::string typeToString(Entry::Type type)
-        {
-            switch (type) {
-                case Entry::Type::KEEPER: return "KEEPER";
-                case Entry::Type::COUNTER: return "COUNTER";
-                // TODO test more cases
-                default: return "UNKNOWN";
-            }
-        }
-    };
-
     class MemoryStorage : public Storage
     {
         private:
@@ -70,31 +51,6 @@ namespace Sider::Storage
 
             entries[id.scope.name].erase(id.key.name);
             return nullptr;
-        }
-
-        Entry::RaterEntry* getRater(const Entry::Id id) override
-        {
-            return static_cast<Entry::RaterEntry*>(get(id, Entry::Type::RATER));
-        }
-
-        private:
-        Entry::Entry* get(const Entry::Id id, Entry::Type type)
-        {
-            Entry::Entry* entry = find(id) ?: entries[id.scope.name][id.key.name] = create(id, type);
-
-            if (entry->type() != type) {
-                throw EntryTypeMismatchException(id, entry->type());
-            }
-
-            return entry;
-        }
-
-        Entry::Entry* create(const Entry::Id id, Entry::Type type)
-        {
-            switch (type) {
-                case Entry::Type::RATER: return Entry::initRaterEntry();
-                default: throw std::runtime_error("Unsupported entry type '" + id.scope.name + ":" + id.key.name + "'");
-            }
         }
     };
 

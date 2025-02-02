@@ -33,6 +33,11 @@ namespace Sider::Storage::Entry
             return value;
         }
 
+        const std::string get(uint8_t partition) override
+        {
+            return get();
+        }
+
         void keep(Ttl newTtl, std::string newValue)
         {
             ttl = newTtl;

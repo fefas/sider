@@ -34,11 +34,9 @@ namespace Sider::Command
                 case Entry::Type::QUEUE:
                     return Result::with(entry->get());
 
-                case Entry::Type::RATER: {
-                    Entry::RaterEntry* raterEntry = dynamic_cast<Entry::RaterEntry*>(entry);
+                case Entry::Type::RATER:
+                    return Result::with(entry->get(partition));
 
-                    return Result::with(raterEntry->get(partition));
-                }
                 default: {
                     throw std::runtime_error("Unsupported entry type '" + id.scope.name + ":" + id.key.name + "'");
                 }

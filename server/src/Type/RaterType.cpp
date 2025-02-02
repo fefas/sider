@@ -1,8 +1,9 @@
 #include <unordered_map>
 #include <cstdint>
-#include "../Entry.h"
 
-#include <iostream>
+#include "../Command/Command.h"
+#include "../Storage/Entry.h"
+#include "../Storage/Storage.h"
 
 namespace Sider::Storage::Entry
 {
@@ -28,9 +29,6 @@ namespace Sider::Storage::Entry
         {
             RExpiringCounts* newCount = new RExpiringCounts(ttl, partition, countStep);
             RExpiringCounts* current = next;
-            if (current->prev == nullptr) {
-                std::cout << "add3" << std::endl;
-            }
 
             while (newCount->expiresBeforeThan(current)) {
                 current = current->next;
@@ -75,7 +73,7 @@ namespace Sider::Storage::Entry
         }
     };
 
-    class CRaterEntry : public RaterEntry
+    class RaterEntry : public Entry
     {
         private:
         uint16_t totalCount;
@@ -83,7 +81,7 @@ namespace Sider::Storage::Entry
         std::unordered_map<uint8_t, uint16_t> counts;
         
         public:
-        CRaterEntry() :
+        RaterEntry() :
             totalCount(0),
             expiringCounts(RExpiringCounts()),
             counts()
@@ -101,7 +99,7 @@ namespace Sider::Storage::Entry
             return totalCount == 0;
         }
 
-        void increment(Ttl ttl, uint8_t partition, uint16_t step) override
+        void increment(Ttl ttl, uint8_t partition, uint16_t step)
         {
             totalCount += step;
             counts[partition] += step;
@@ -111,14 +109,14 @@ namespace Sider::Storage::Entry
 
         const std::string get() override
         {
-            return std::to_string(get(0));
+            return get(0);
         }
 
-        const uint16_t get(uint8_t partition) override
+        const std::string get(uint8_t partition) override
         {
             clearExpired();
 
-            return static_cast<uint16_t>((100.0f * counts[partition]) / totalCount);
+            return std::to_string(static_cast<uint16_t>((100.0f * counts[partition]) / totalCount));
         }
 
         private:
@@ -132,9 +130,54 @@ namespace Sider::Storage::Entry
             }
         }
     };
+}
 
-    RaterEntry* initRaterEntry()
+namespace Sider::Command
+{
+    using namespace Sider::Storage;
+
+    class RateCommand : public Command
     {
-        return new CRaterEntry();
+        private:
+        const Entry::Id id;
+        const Entry::Ttl ttl;
+        const uint8_t partition;
+        const uint16_t step;
+
+        public:
+        RateCommand(Entry::Id id, Entry::Ttl ttl, uint8_t partition, uint16_t step) :
+            id(id),
+            ttl(ttl),
+            partition(partition),
+            step(step)
+        {}
+
+        Result execute(Sider::Storage::Storage* storage) override
+        {
+            // todo add test when returned type is not RaterEntry
+
+            Entry::Entry* entry = storage->find(id);
+
+            if (entry == nullptr) {
+                Entry::RaterEntry* rater = new Entry::RaterEntry();
+                rater->increment(ttl, partition, step);
+                storage->add(id, rater);
+            } else {
+                Entry::RaterEntry* rater = static_cast<Entry::RaterEntry*>(entry);
+                rater->increment(ttl, partition, step);
+            }
+
+            return Result::ok();
+        }
+    };
+
+    Command* rate(std::string scope, std::string key, uint8_t partition, uint16_t step)
+    {
+        return new RateCommand(Entry::Id{scope, key}, Entry::Ttl::forever(), partition, step);
+    }
+
+    Command* rate(std::string scope, std::string key, uint8_t partition, uint16_t step, uint32_t ttl)
+    {
+        return new RateCommand(Entry::Id{scope, key}, Entry::Ttl::expiringIn(ttl), partition, step);
     }
 }
