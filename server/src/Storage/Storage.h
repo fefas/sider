@@ -16,7 +16,6 @@ namespace Sider::Storage
 
         virtual Entry::Entry* find(const Entry::Id id) = 0;
         virtual Entry::CounterEntry* getCounter(const Entry::Id id) = 0;
-        virtual Entry::QueueEntry* getQueue(const Entry::Id id) = 0;
         virtual Entry::RaterEntry* getRater(const Entry::Id id) = 0;
     };
 

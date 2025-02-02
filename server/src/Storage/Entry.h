@@ -42,12 +42,6 @@ namespace Sider::Storage::Entry
         virtual void increment(Ttl ttl, uint8_t step) = 0;
     };
 
-    struct QueueEntry : public Entry
-    {
-        virtual void queue(std::string value) = 0;
-        virtual void dequeue() = 0;
-    };
-
     struct RaterEntry : public Entry
     {
         virtual void increment(Ttl ttl, uint8_t partition, uint16_t step) = 0;
@@ -55,6 +49,5 @@ namespace Sider::Storage::Entry
     };
 
     CounterEntry* initCounterEntry();
-    QueueEntry* initQueueEntry();
     RaterEntry* initRaterEntry();
 }
