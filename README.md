@@ -69,7 +69,7 @@ For running the project on local, you need to have Docker >= 2.32 installed.
    `ttl` is provided, the `step` is decremented after its expiration and the
    entry is removed in case the counter comes back to 0.
 
-5. `RATE scope key value step partition [ttl]`
+5. `RATE scope key step partition [ttl]`
 
    Increment by `step` the rater `partition` identified by `key` inside of the
    `scope`.  If `ttl` is provided, the `step` is decremented after its
